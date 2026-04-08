@@ -7,46 +7,55 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 
 
-# Data import
+def create_model(X_train, X_test, y_train, y_test):
 
-df = pd.read_csv("../data/Final_Amharic.csv")
+	model = make_pipeline(
+	    TfidfVectorizer(max_features=5000),
+	    StandardScaler(with_mean=False),
+	    LogisticRegression(
+	        C=0.1,
+	        max_iter=1000,
+	        random_state=42
+	    )
+	)
 
-# Feature and Target Separation
+	fitted_model = model.fit(X_train, y_train)
 
-df["text"] = df["headline"] + " " + df["article"] + " " + df["link"]
+	print(f"Training Accuracy: {model.score(X_train, y_train)}")
+	print(f"Test Accuracy: {model.score(X_test, y_test)}")
+
+	return fitted_model
+
+
+# Amharic Model Training
+
+df = pd.read_csv("../data/Amharic.csv")
+
+df["text"] = df.headline + " " + df.article + " " + df.link
 
 X = df.text
 y = df.category
 
-# Splitting Data to Training and Testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("Amharic Model Training!")
+
+amharic_model = create_model(X_train, X_test, y_train, y_test)
+
+joblib.dump(amharic_model, "Amharic_Prediction_Pipeline.pkl")
+
+
+# English Model Training
+
+df = pd.read_csv("../data/English.csv")
+
+X = df.text
+y = df.category
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Vectorization, Standardization, and Training Pipeline
+print("English Model Training!")
 
-model = make_pipeline(
-	TfidfVectorizer(max_features=5000),
-	StandardScaler(with_mean=False),
-	LogisticRegression(
-		C=0.1,
-		max_iter=1000,
-		random_state=42
-	)
-)
+english_model = create_model(X_train, X_test, y_train, y_test)
 
-
-# Model Training
-
-
-model.fit(X_train, y_train)
-
-
-# Testing Model on Training and Test Datas
-
-print(f"Training accuracy: {model.score(X_train, y_train):.2f}"),
-print(f"Test accuracy: {model.score(X_test, y_test):.2f}")
-
-
-# Extraction of vectorizer and model
-
-joblib.dump(model, "news_classfier_pipeline.pkl")
+joblib.dump(english_model, "English_Prediction_Pipeline.pkl")
