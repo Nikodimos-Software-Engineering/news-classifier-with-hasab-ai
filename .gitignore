@@ -1,4 +1,4 @@
 data/
 */.ipynb_checkpoints
 */*.ipynb
-backend/.env
+# backend/.env
