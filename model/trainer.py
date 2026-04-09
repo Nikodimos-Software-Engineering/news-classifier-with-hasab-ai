@@ -42,7 +42,7 @@ print("Amharic Model Training!")
 
 amharic_model = create_model(X_train, X_test, y_train, y_test)
 
-joblib.dump(amharic_model, "Amharic_Prediction_Pipeline.pkl")
+joblib.dump(amharic_model, "Amharic_Classification_Pipeline.pkl")
 
 
 # English Model Training
@@ -58,4 +58,4 @@ print("English Model Training!")
 
 english_model = create_model(X_train, X_test, y_train, y_test)
 
-joblib.dump(english_model, "English_Prediction_Pipeline.pkl")
+joblib.dump(english_model, "English_Classification_Pipeline.pkl")
